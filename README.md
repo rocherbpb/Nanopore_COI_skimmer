@@ -20,7 +20,7 @@ for fq in data/*.{fastq,fastq.gz}; do
   sample_out="$OUTDIR/$sample"
   mkdir -p "$sample_out"
 
-  # 0. Filter reads with NanoFilt (quality ≥10, length ≥200)
+  ### 0. Filter reads with NanoFilt (quality ≥10, length ≥200)
   echo "Filtering reads with NanoFilt..."
   if [[ "$fq" == *.gz ]]; then
     zcat "$fq" | NanoFilt -q 10 -l 200 > "$sample_out/${sample}_filtered.fastq"
