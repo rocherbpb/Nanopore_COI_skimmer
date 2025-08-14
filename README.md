@@ -8,7 +8,7 @@ MEDAKA_MODEL="r941_min_hac_g507"
 OUTDIR="results"
 GENBANK_REF="data/Reference.gb"
 ```
-
+```sh
 ### Loop over input FASTQ/set output directories
 mkdir -p "$OUTDIR"
 
@@ -22,6 +22,7 @@ for fq in data/*.{fastq,fastq.gz}; do
 
   sample_out="$OUTDIR/$sample"
   mkdir -p "$sample_out"
+```
 
   ### 0. Filter reads with NanoFilt (quality ≥10, length ≥200)
   echo "Filtering reads with NanoFilt..."
