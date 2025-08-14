@@ -38,9 +38,7 @@ for fq in data/*.{fastq,fastq.gz}; do
   samtools fastq "$sample_out/aln.bam" > "$sample_out/mapped_reads.fastq"
 
   ### 2. Assemble mitogenome from mapped reads (rnabloom2)
-  conda activate rnabloom
   rnabloom -t $THREADS -long "$sample_out/mapped_reads.fastq" -o "$sample_out/rnabloom_mito_out"
-  conda deactivate
 
   ### 3. Map mapped reads back to rnabloom assembly for polishing input
   minimap2 -t $THREADS -ax map-ont "$sample_out/rnabloom_mito_out/rnabloom.transcripts.fa" "$sample_out/mapped_reads.fastq" > "$sample_out/rnabloom_aln.sam"
@@ -49,18 +47,16 @@ for fq in data/*.{fastq,fastq.gz}; do
   racon -t $THREADS "$sample_out/mapped_reads.fastq" "$sample_out/rnabloom_aln.sam" "$sample_out/rnabloom_mito_out/rnabloom.transcripts.fa" > "$sample_out/racon_round1.fa"
 
   ### 5. Polish with medaka if flag true
-  conda activate medaka
   if [ "$POLISH" = true ]; then
     medaka_consensus -i "$sample_out/mapped_reads.fastq" -d "$sample_out/racon_round1.fa" -o "$sample_out/medaka_out" -t $THREADS -m "$MEDAKA_MODEL"
     final_asm="medaka_out/consensus.fasta"
   else
     final_asm="rnabloom_mito_out/rnabloom.transcripts.fa"
   fi
-  conda deactivate
 
   ### 6. Run mitofinder from inside sample folder, including GenBank reference
   cd "$sample_out"
-  ~/MitoFinder/mitofinder -j "$sample" -a "$final_asm" -p $THREADS  -o $GENETIC_CODE -r "../../$GENBANK_REF"
+  mitofinder -j "$sample" -a "$final_asm" -p $THREADS  -o $GENETIC_CODE -r "../../$GENBANK_REF"
   cd - > /dev/null
 
   ### 7. Extract COX1 sequences from mitofinder results using seqkit grep
