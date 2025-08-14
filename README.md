@@ -1,12 +1,12 @@
 ```sh
 ### Config
 THREADS=$NSLOTS
-MITO_REF="data/Reference_taxa.fasta"
+MITO_REF="data/Reference_mito_taxa.fasta"
 GENETIC_CODE=5
 POLISH=true
 MEDAKA_MODEL="r1041_e82_400bps_hac_v4.3.0"
 OUTDIR="results"
-GENBANK_REF="data/Reference.gb"
+GENBANK_REF="data/Reference_annot.gb"
 
 ### Loop over input FASTQ/set output directories
 mkdir -p "$OUTDIR"
