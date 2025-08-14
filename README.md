@@ -31,24 +31,24 @@ for fq in data/*.{fastq,fastq.gz}; do
 
   filtered_reads="$sample_out/${sample}_filtered.fastq"
 
-  # 1. Map filtered reads to mito reference and extract mapped reads only (flag -F 4 filters unmapped)
+  ### 1. Map filtered reads to mito reference and extract mapped reads only (flag -F 4 filters unmapped)
   minimap2 -t $THREADS --secondary=no -ax map-ont "$MITO_REF" "$filtered_reads" | \
     samtools view -b -@ $THREADS -F 4 -o "$sample_out/aln.bam"
 
   samtools fastq "$sample_out/aln.bam" > "$sample_out/mapped_reads.fastq"
 
-  # 2. Assemble mitogenome from mapped reads (rnabloom2)
+  ### 2. Assemble mitogenome from mapped reads (rnabloom2)
   conda activate rnabloom
   rnabloom -t $THREADS -long "$sample_out/mapped_reads.fastq" -o "$sample_out/rnabloom_mito_out"
   conda deactivate
 
-  # 3. Map mapped reads back to rnabloom assembly for polishing input
+  ### 3. Map mapped reads back to rnabloom assembly for polishing input
   minimap2 -t $THREADS -ax map-ont "$sample_out/rnabloom_mito_out/rnabloom.transcripts.fa" "$sample_out/mapped_reads.fastq" > "$sample_out/rnabloom_aln.sam"
 
-  # 4. Polish assembly with racon using mapped_reads.fastq and rnabloom_aln.sam
+  ### 4. Polish assembly with racon using mapped_reads.fastq and rnabloom_aln.sam
   racon -t $THREADS "$sample_out/mapped_reads.fastq" "$sample_out/rnabloom_aln.sam" "$sample_out/rnabloom_mito_out/rnabloom.transcripts.fa" > "$sample_out/racon_round1.fa"
 
-  # 5. Polish with medaka if flag true
+  ### 5. Polish with medaka if flag true
   conda activate medaka
   if [ "$POLISH" = true ]; then
     medaka_consensus -i "$sample_out/mapped_reads.fastq" -d "$sample_out/racon_round1.fa" -o "$sample_out/medaka_out" -t $THREADS -m "$MEDAKA_MODEL"
@@ -58,16 +58,16 @@ for fq in data/*.{fastq,fastq.gz}; do
   fi
   conda deactivate
 
-  # 6. Run mitofinder from inside sample folder, including GenBank reference
+  ### 6. Run mitofinder from inside sample folder, including GenBank reference
   cd "$sample_out"
   ~/MitoFinder/mitofinder -j "$sample" -a "$final_asm" -p $THREADS  -o $GENETIC_CODE -r "../../$GENBANK_REF"
   cd - > /dev/null
 
-  # 7. Extract COX1 sequences from mitofinder results using seqkit grep
+  ### 7. Extract COX1 sequences from mitofinder results using seqkit grep
   seqkit grep -r -i -p "cox1|coxi|cytochrome c oxidase subunit 1" \
     $(find "$sample_out/$sample" -name "*final_genes_NT.fasta") > "$sample_out/cox1_extracted.fasta"
 
-  # 8. Calculate mean coverage of COX1 sequences using coverm
+  ### 8. Calculate mean coverage of COX1 sequences using coverm
   coverm contig --reference "$sample_out/cox1_extracted.fasta" --single "$filtered_reads" --mapper minimap2-ont \
     --methods mean --output-file "$sample_out/cox1_coverage.tsv" --threads $THREADS --min-read-percent-identity 80
 
