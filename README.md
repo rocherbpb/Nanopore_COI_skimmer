@@ -1,11 +1,11 @@
 ### Config
 THREADS=$NSLOTS
-MITO_REF="data/NA_tick_mtDNA.fasta"
+MITO_REF="data/Reference_taxa.fasta"
 GENETIC_CODE=5
 POLISH=true
 MEDAKA_MODEL="r941_min_hac_g507"
 OUTDIR="results"
-GENBANK_REF="data/A_americanum_COI_MN160081.gb"
+GENBANK_REF="data/Reference.gb"
 
 mkdir -p "$OUTDIR"
 
