@@ -7,7 +7,7 @@ MEDAKA_MODEL="r941_min_hac_g507"
 OUTDIR="results"
 GENBANK_REF="data/Reference.gb"
 
-### Batch job
+### Loop over input FASTQ/set output directories
 mkdir -p "$OUTDIR"
 
 for fq in data/*.{fastq,fastq.gz}; do
