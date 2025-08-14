@@ -1,6 +1,5 @@
 ### Config
 THREADS=$NSLOTS
-
 MITO_REF="data/Reference_taxa.fasta"
 GENETIC_CODE=5
 POLISH=true
