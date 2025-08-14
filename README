@@ -1,4 +1,4 @@
-# Config
+## Config
 THREADS=$NSLOTS
 MITO_REF="data/NA_tick_mtDNA.fasta"
 GENETIC_CODE=5
