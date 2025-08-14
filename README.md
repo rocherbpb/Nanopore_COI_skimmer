@@ -8,7 +8,6 @@ OUTDIR="results"
 GENBANK_REF="data/Reference.gb"
 
 ### Batch job
-
 mkdir -p "$OUTDIR"
 
 for fq in data/*.{fastq,fastq.gz}; do
