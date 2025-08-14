@@ -4,7 +4,7 @@ THREADS=$NSLOTS
 MITO_REF="data/Reference_taxa.fasta"
 GENETIC_CODE=5
 POLISH=true
-MEDAKA_MODEL="r941_min_hac_g507"
+MEDAKA_MODEL="r1041_e82_400bps_hac_v4.3.0"
 OUTDIR="results"
 GENBANK_REF="data/Reference.gb"
 
